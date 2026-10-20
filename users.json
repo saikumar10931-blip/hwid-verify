@@ -1,9 +1,21 @@
-{
-  "red": {
-    "pass": "scrypt:32768:8:1$5xQCfYaTkiSh7XZ4$27a99e71facc2d4d9cd9eecda595c57521e0403d02da1159d4901a3485c8ba7dc08da5ff9c855073c392d0318590da1ad8cea7ffae2d2a0c5586b00c0e641ac9",
-    "hwid": "3348ed683fce1e1360f2ff14aadbe5d3380d2ba3fdca948501619faaabebb394",
-    "banned": false,
-    "created": 1792495285,
-    "expires": 1795087285
-  }
-}
+import getpass, hashlib, json, os, time
+ 
+username = input("Username: ").strip().lower()
+password = getpass.getpass("Password (hidden): ")
+days = int(input("Days of access (0 = lifetime): ") or 0)
+hwid = input("User's HWID (64 characters): ").strip().lower()
+ 
+if len(hwid) != 64 or any(c not in "0123456789abcdef" for c in hwid):
+    raise SystemExit("Invalid HWID: must be 64 hex characters.")
+ 
+salt = os.urandom(16)
+entry = {username: {
+    "salt": salt.hex(),
+    "hash": hashlib.pbkdf2_hmac("sha256", password.encode(), salt, 200000).hex(),
+    "hwid": hwid,
+    "expires": int(time.time() + days * 86400) if days > 0 else 0,
+}}
+ 
+text = json.dumps(entry, indent=2)
+print("\n--- paste this inside users.json (add a comma between entries) ---\n")
+print(text[2:-2])
