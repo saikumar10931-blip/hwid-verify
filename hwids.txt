@@ -1,0 +1,4 @@
+# One PC per line:  HWID | name | expiry
+# expiry = YYYY-MM-DD (valid through that day) or lifetime. Lines starting with # are ignored.
+
+836568e2a63222feafc7cb23048a36b6000a47fea3d984ead4923655a50983f4 | redbull | lifetime
